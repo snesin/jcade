@@ -56,11 +56,11 @@ The `destroy` method attaches an event that is fired when the element is removed
 ## Supported browsers
 
 It seems to work on the following browsers. If you have any other information, please let me know.
-* IE 5.5+
-* Chrome
-* Firefox
-* Safari
-* Opera
+ * IE 5.5+
+ * Chrome
+ * Firefox
+ * Safari
+ * Opera
 
 Anything else is anybody's guess. Try it and let me know.
 
