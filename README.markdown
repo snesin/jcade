@@ -36,7 +36,7 @@ Though used far less often, the `destroy` event can be used to perform clean-up.
 
 ### `create` Signature
 
-The `create` method is typically used to pass a selector and event handler to the document:
+The `create` method is typically used to pass a selector and event handler to the `document` object:
 
     // selector: such as tagName.className
     // eventHandler: the function to execute when an element matching the selector is created
@@ -44,7 +44,7 @@ The `create` method is typically used to pass a selector and event handler to th
     //                 the handler will be called for pre-existing matching elements)
     $(document).create( selector, eventHandler[, notForExisting] );
 
-You can assign create events to nodes other than the document as well. The handler will get called when decendants (to any level) matching the selector are created.
+You can assign create events to nodes other than `document` as well. The handler will get called when decendants (to any level) matching the selector are created.
 
 ### `destroy` Signature
 
@@ -66,9 +66,9 @@ Anything else is anybody's guess. Try it and let me know.
 
 ## How does it work
 
-It does not use an interval.
+**It does not use an interval.**
 
-For Microsoft's Internet Explorer, it uses [behaviors](http://msdn.microsoft.com/en-us/library/ms531018\(v=VS.85\).aspx) to trigger the events, and the two .htc files will be needed. The path to both .htc files is controlled by the jQuery.fn.create.htcPath variable. By default it will be set to the same path as the script containing jcade.js or jcade.min.js. If neither is found, it is blank, and the files are assumed to be in the same folder as the page. The value of jQuery.fn.create.htcPath can be set as needed. The .htc files must have the same document domain as the page.
+For Microsoft's Internet Explorer, it uses [behaviors](http://msdn.microsoft.com/en-us/library/ms531018\(v=VS.85\).aspx) to trigger the events, and the two `.htc` files will be needed. The path to both `.htc` files is controlled by the `jQuery.fn.create.htcPath` variable. By default it will be set to the same path as the script containing `jcade.js` or `jcade.min.js`. If neither is found, it is blank, and the files are assumed to be in the same folder as the page. The value of `jQuery.fn.create.htcPath` can be set as needed. The `.htc` files must have the same document domain as the page.
 
 For non-IE browsers, it uses DOMNodeInserted (delayed with a timer) and DOMNodeRemoved events.
 
