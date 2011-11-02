@@ -9,7 +9,7 @@
  *
 */
 (function( $ ){
-   var bound=false,bindings=[],attr='jcade.create.tagged';
+   var bindings=[],attr='jcade.create.tagged';
    function searchAndHandle(selector,context,handler){
       $(selector,context).each(function(index,element){if(!element[attr]){element[attr]=true;handler($(element),jQuery.Event("create",element));}});
    }
@@ -35,11 +35,8 @@
    $.fn.create=function(selector,handler,noExisting){
       if (arguments.length==1 && typeof(selector)!='string')
          return createdElementIE(selector);
-      if ($.browser.msie && !bound)
-      {
+      if ($.browser.msie && !document.getElementById('jcade.create.htc'))
          $('HEAD').append('<style id="jcade.create.htc">.jcade\\.destroy {behavior:url('+$.fn.create.htcPath+'jcade.destroy.htc)}</style>');
-         bound=true;
-      }
       if (arguments.length==0)
          return this;
       if ($.browser.msie)
@@ -73,7 +70,7 @@
       var scripts=document.getElementsByTagName("SCRIPT");
       for (var i=0;i<scripts.length;i++)
          if (typeof(scripts[i].src)=="string" &&
-             scripts[i].src.search(/^(.*\b)jcade(\.min)?\.js$/i)==0)
+             scripts[i].src.search(/^(.*\b)jcade(\.min)?\.js(\?.*)?(#.*)?$/i)==0)
             return RegExp.$1;
       return "";
    })();
