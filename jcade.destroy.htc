@@ -1,0 +1,1 @@
+<public:attach event="ondetach" onevent="try{jQuery.fn.destroy(element);}catch(e){}" />
