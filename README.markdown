@@ -2,7 +2,7 @@
 
 The jcade plug-in adds `create` and `destroy` events to jQuery. When an element that matches a selector is added to the page, the `create` event is triggered. When an element is removed, the `destroy` event is triggered.
 
-For example, the following code will listen for new elements with a className of `myNamespace.MyController` and create an instance of a JavaScript `myNamespace.MyController` for each:
+For example, the following code will listen for new elements with a className of `myNamespace.myController` and create an instance of a JavaScript `myNamespace.myController` for each:
 
     // A simple class
     $.Controller('myNamespace.myController',{
