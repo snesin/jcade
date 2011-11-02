@@ -1,36 +1,36 @@
 # jcade - jQuery Create and Destroy Events
 
-The jcade plug-in adds create and destroy events to jQuery. When an element that matches a selector is added to the page, the `create` event is triggered. When an element is removed, the `destroy` event is triggered.
+The jcade plug-in adds `create` and `destroy` events to jQuery. When an element that matches a selector is added to the page, the `create` event is triggered. When an element is removed, the `destroy` event is triggered.
 
 For example, the following code will listen for new elements with a className of `myNamespace.MyController` and create an instance of a JavaScript `myNamespace.MyController` for each:
 
-   // A simple class
-   $.Controller('myNamespace.MyController',{
-      init : function(){
-      }
-   });
-
-   // Listen for new elements and instantiate instances of the above class
-   $(document).create(".myNamespace\\.MyController",function(element,event){
-      new myNamespace.MyClass(element);
-   });
+    // A simple class
+    $.Controller('myNamespace.MyController',{
+        init : function(){
+        }
+    });
+    
+    // Listen for new elements and instantiate instances of the above class
+    $(document).create(".myNamespace\\.MyController",function(element,event){
+        new myNamespace.MyClass(element);
+    });
 
 Then you can add elements to the page anywhere like so:
 
-   <div class="myNamespace.MyController" />
+    <div class="myNamespace.MyController" />
   
 The event is triggered regardless where the element is in the document or how the element was created (via innerHTML assignments, jQuery methods, or methods from other libraries).
 
 Though used far less often, the `destroy` event can be used to perform clean-up. A modified class from above:
 
-   $.Controller('myNamespace.MyController',{
-      init : function(){
-      },
-      ".myNamespace\\.MyController destroy":function(element,event)
-      {
-         //Perform clean-up here.
-      }
-   });
+    $.Controller('myNamespace.MyController',{
+        init : function(){
+        },
+        ".myNamespace\\.MyController destroy":function(element,event)
+        {
+            //Perform clean-up here.
+        }
+    });
 
 ## API
 
@@ -40,7 +40,8 @@ The `create` method is typically used to pass a selector and event handler to th
 
     // selector: such as tagName.className
     // eventHandler: the function to execute when an element matching the selector is created
-    // notForExisting: do not call for matching elements already on the page (default is false, the handler will be called for pre-existing matching elements)
+    // notForExisting: do not call for matching elements already on the page (default is false, 
+    //                 the handler will be called for pre-existing matching elements)
     $(document).create( selector, eventHandler[, notForExisting] );
 
 You can assign create events to nodes other than the document as well. The handler will get called when decendants (to any level) matching the selector are created.
