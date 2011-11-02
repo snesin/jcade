@@ -11,7 +11,7 @@
 (function( $ ){
    var bound=false,bindings=[],attr='jcade.create.tagged';
    function searchAndHandle(selector,context,handler){
-      $(selector,context).each(function(index,element){if(!element[attr]){element[attr]=true;handler($(element));}});
+      $(selector,context).each(function(index,element){if(!element[attr]){element[attr]=true;handler($(element),jQuery.Event("create",element));}});
    }
    function createdElementIE(element)
    {
@@ -19,6 +19,7 @@
          return false;
       element[attr]=true;
       var e=$(element);
+      var event=jQuery.Event("create",element);
       for (var i=0;i<bindings.length;i++)
          if (e.is(bindings[i].selector))
          {
@@ -26,7 +27,7 @@
             for (var j=0;j<c.length;j++)
                if ($.contains(c[j],element))
                {
-                  bindings[i].handler(e);
+                  bindings[i].handler(e,event);
                   break;
                }
          }
@@ -84,10 +85,11 @@
    function destroyedElementIE(element)
    {
       var e=$(element);
+      var event=jQuery.Event("destroy",element);
       for (var i=0;i<bindings.length;i++)
          if (bindings[i] && bindings[i].element===element)
          {
-            bindings[i].handler(e);
+            bindings[i].handler(e,event);
             bindings[i]=null;
          }
       e.removeClass("jcade.destroy");
@@ -106,7 +108,7 @@
             $(".jcade\\.destroy",event.target).triggerHandler("DOMNodeRemoved");
             var e=$(event.target);
             if (e.hasClass('jcade.destroy'))
-               handler(e);
+               handler(e,jQuery.Event("destroy",event.target));
             e.removeClass("jcade.destroy");
          });
       return this;
