@@ -19,7 +19,7 @@ Then you can add elements to the page anywhere like so:
 
     <div class="myNamespace.myController" />
   
-The event is triggered regardless where the element is in the document or how the element was created (via innerHTML assignments, jQuery methods, or methods from other libraries).
+The event is triggered regardless where the element is in the document or how the element was created (via innerHTML assignments, jQuery methods, or methods from other frameworks).
 
 Though used far less often, the `destroy` event can be used to perform clean-up. A modified class from above:
 
