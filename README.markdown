@@ -5,28 +5,28 @@ The jcade plug-in adds `create` and `destroy` events to jQuery. When an element 
 For example, the following code will listen for new elements with a className of `myNamespace.MyController` and create an instance of a JavaScript `myNamespace.MyController` for each:
 
     // A simple class
-    $.Controller('myNamespace.MyController',{
+    $.Controller('myNamespace.myController',{
         init : function(){
         }
     });
     
     // Listen for new elements and instantiate instances of the above class
-    $(document).create(".myNamespace\\.MyController",function(element,event){
-        new myNamespace.MyClass(element);
+    $(document).create(".myNamespace\\.myController",function(element,event){
+        new myNamespace.myController(element);
     });
 
 Then you can add elements to the page anywhere like so:
 
-    <div class="myNamespace.MyController" />
+    <div class="myNamespace.myController" />
   
 The event is triggered regardless where the element is in the document or how the element was created (via innerHTML assignments, jQuery methods, or methods from other libraries).
 
 Though used far less often, the `destroy` event can be used to perform clean-up. A modified class from above:
 
-    $.Controller('myNamespace.MyController',{
+    $.Controller('myNamespace.myController',{
         init : function(){
         },
-        ".myNamespace\\.MyController destroy":function(element,event)
+        ".myNamespace\\.myController destroy":function(element,event)
         {
             //Perform clean-up here.
         }
@@ -56,11 +56,11 @@ The `destroy` method attaches an event that is fired when the element is removed
 ## Supported browsers
 
 It seems to work on the following browsers. If you have any other information, please let me know.
-IE 5.5+
-Chrome
-Firefox
-Safari
-Opera
+* IE 5.5+
+* Chrome
+* Firefox
+* Safari
+* Opera
 
 Anything else is anybody's guess. Try it and let me know.
 
