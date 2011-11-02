@@ -70,7 +70,7 @@ Anything else is anybody's guess. Try it and let me know.
 
 For Microsoft's Internet Explorer, it uses [behaviors](http://msdn.microsoft.com/en-us/library/ms531018\(v=VS.85\).aspx) to trigger the events, and the two `.htc` files will be needed. The path to both `.htc` files is controlled by the `jQuery.fn.create.htcPath` variable. By default it will be set to the same path as the script containing `jcade.js` or `jcade.min.js`. If neither is found, it is blank, and the files are assumed to be in the same folder as the page. The value of `jQuery.fn.create.htcPath` can be set as needed. The `.htc` files must have the same document domain as the page.
 
-For non-IE browsers, it uses DOMNodeInserted (delayed with a timer) and DOMNodeRemoved events.
+For non-IE browsers, it uses `DOMNodeInserted` (delayed with a timer) and `DOMNodeRemoved` events.
 
 ## License
 
