@@ -1,5 +1,6 @@
 /*!
  * jcade v0.1
+ * http://github.com/snesin/jcade
  * 
  * jQuery create and destroy events
  * 
