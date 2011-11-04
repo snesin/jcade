@@ -9,7 +9,7 @@
  *
 */
 (function($) {
-   var bindings=[],attr='jcade.create.tagged';
+   var bindings=[],attr='jcade.create.tagged_',nextBindId=0;
    function getEvent(target,currentTarget,data) {
       var event=jQuery.Event('create');
       event.srcElement=event.target=target;
@@ -17,18 +17,18 @@
       event.data=data;
       return event;
    }
-   function searchAndHandle(selector,context,eventData,handler) {
+   function searchAndHandle(selector,context,eventData,handler,bindId) {
       var list=[];
       context.each(function(cIndex,cElement) {
          $(selector,cElement).each(function(index,element) {
-            if(!element[attr]) {
+            if(!element[attr+bindId]) {
                list.push(element);
                handler(getEvent(element,cElement,eventData));
             }
          })
       });
       for (var i=0;i<list.length;i++) {
-         list[attr]=true;
+         list[i][attr+bindId]=true;
       }
       list=null;
    }
@@ -42,13 +42,13 @@
             var c=bindings[i].context;
             for (var j=0;j<c.length;j++) {
                if ($.contains(c[j],element)) {
+                  element[attr+bindings[i].bindId]=true;
                   bindings[i].handler(getEvent(element,c[j],bindings[i].data));
                   break;
                }
             }
          }
       }
-      element[attr]=true;
    }
    $.fn.create=function(/*selector [,eventData] ,handler [,noExisting]*/) {
       if (arguments.length==1 && typeof(arguments[0])!='string') {
@@ -60,7 +60,7 @@
       if (arguments.length==0) {
          return this;
       }
-      var selector=arguments[0],eventData=null,handler,noExisting=false;
+      var selector=arguments[0],eventData=null,handler,noExisting=false,bindId=nextBindId++;
       if (arguments.length>2 && typeof(arguments[2])=='function') {
          eventData=arguments[1];
          handler=arguments[2];
@@ -70,16 +70,16 @@
          noExisting=arguments.length>2 && arguments[2];
       }
       if ($.browser.msie) {
-         bindings.push({selector:selector,context:this,data:eventData,handler:handler});
+         bindings.push({selector:selector,context:this,data:eventData,handler:handler,bindId:bindId});
          document.getElementById('jcade.create.htc').styleSheet.addRule(selector,'behavior:url('+$.fn.create.htcPath+'jcade.create.htc)',0);
       } else {
          var delayHandle=null;
          var self=this;
-         this.bind('DOMNodeInserted.jcade.create',function() {
+         this.bind('DOMNodeInserted.jcade.create',function(event) {
             if(!delayHandle) {
                delayHandle=window.setTimeout(function() {
                   delayHandle=null;
-                  searchAndHandle(selector,self,eventData,handler);
+                  searchAndHandle(selector,self,eventData,handler,bindId);
                },1);
             }
          });
@@ -87,9 +87,9 @@
       if (noExisting) {
          $(selector,this).each(function(index,e){e[attr]=true;});
       } else if ($.isReady) {
-         searchAndHandle(selector,this,eventData,handler);
+         searchAndHandle(selector,this,eventData,handler,bindId);
       } else if (!$.browser.msie) {
-         $(function(){searchAndHandle(selector,self,eventData,handler);});
+         $(function(){searchAndHandle(selector,self,eventData,handler,bindId);});
       }
       return this;
    };
@@ -105,7 +105,7 @@
 })( jQuery );
 
 (function($) {
-   var bindings=[];
+   var bindings=[],attr='jcade.destroy.tagged_',nextBindId=0;
    function getEvent(target,data) {
       var event=jQuery.Event('destroy');
       event.currentTarget=event.target=target;
@@ -115,17 +115,17 @@
    function destroyedElementIE(element) {
       for (var i=0;i<bindings.length;i++) {
          if (bindings[i] && bindings[i].element===element) {
+            element[attr+bindings[i].bindId]=true;
             bindings[i].handler(getEvent(element,bindings[i].data));
             bindings[i]=null;
          }
       }
-      $(element).removeClass('jcade.destroy');
    }
    $.fn.destroy=function(/*[ eventData,] handler, namespace*/) {
       if (arguments.length==1 && typeof(arguments[0])!='function') {
          return destroyedElementIE(arguments[0]);
       }
-      var eventData=null,handler,namespace=null;
+      var eventData=null,handler,namespace=null,bindId=nextBindId++;
       if (arguments.length>1 && typeof(arguments[1])=='function') {
          eventData=arguments[0];
          handler=arguments[1];
@@ -141,15 +141,17 @@
       this.addClass('jcade.destroy');
       if ($.browser.msie) {
          $.fn.create();
-         this.each(function(index,element){bindings.push({element:element,namespace:namespace,data:eventData,handler:handler});});
+         this.each(function(index,element){bindings.push({element:element,namespace:namespace,data:eventData,handler:handler,bindId:bindId});});
       } else {
          this.bind('DOMNodeRemoved.jcade'+(namespace ? '.'+namespace : ''),function(event) {
+            if (event.target!==event.currentTarget)
+               return;
             $('.jcade\\.destroy',event.target).triggerHandler('DOMNodeRemoved');
             var e=$(event.target);
-            if (e.hasClass('jcade.destroy')) {
+            if (e.hasClass('jcade.destroy') && !event.target[attr+bindId]) {
+               event.target[attr+bindId]=true;
                handler(getEvent(event.target,eventData));
             }
-            e.removeClass('jcade.destroy');
          });
       }
       return this;
