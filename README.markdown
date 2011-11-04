@@ -2,35 +2,28 @@
 
 The jcade plug-in adds `create` and `destroy` events to jQuery. When an element that matches a selector is added to the page, the `create` event is triggered. When an element is removed, the `destroy` event is triggered.
 
-For example, the following code will listen for new elements with a className of `myNamespace.myController` and create an instance of a JavaScript `myNamespace.myController` for each:
-
-    // A simple class
-    $.Controller('myNamespace.myController',{
-        init : function(){
-        }
-    });
+For example, the following code will listen for new elements with a className of `myNamespace.widgets.ColorPicker` and create an instance of a JavaScript `myNamespace.widgets.ColorPicker` for each:
     
     // Listen for new elements and instantiate instances of the above class
-    $(document).create(".myNamespace\\.myController",function(element,event){
-        new myNamespace.myController(element);
+    $(document).create(".myNamespace\\.widgets\\.ColorPicker",function(event){
+        new myNamespace.widgets.ColorPicker(event.target);
     });
 
 Then you can add elements to the page anywhere like so:
 
-    <div class="myNamespace.myController" />
+    <input class="myNamespace.widgets.ColorPicker" />
   
 The event is triggered regardless where the element is in the document or how the element was created (via innerHTML assignments, jQuery methods, or methods from other frameworks).
 
-Though used far less often, the `destroy` event can be used to perform clean-up. A modified class from above:
+Though used far less often, the `destroy` event can be used to perform clean-up. A hypothetical class:
 
-    $.Controller('myNamespace.myController',{
-        init : function(){
-        },
-        ".myNamespace\\.myController destroy":function(element,event)
-        {
-            //Perform clean-up here.
-        }
-    });
+    myNamespace.widgets.ColorPicker = function( element ) {
+         var self=this;
+         $( element ).destroy( function( event ){ self.elementDestroyed( event );});
+    };
+    myNamespace.widgets.ColorPicker.prototype.elementDestroyed = function( event ) {
+        //perform cleanup
+    };
 
 ## API
 
@@ -38,11 +31,12 @@ Though used far less often, the `destroy` event can be used to perform clean-up.
 
 The `create` method is typically used to pass a selector and event handler to the `document` object:
 
-    // selector: such as tagName.className
-    // eventHandler: the function to execute when an element matching the selector is created
-    // notForExisting: do not call for matching elements already on the page (default is false, 
-    //                 the handler will be called for pre-existing matching elements)
-    $(document).create( selector, eventHandler[, notForExisting] );
+    // selector       : such as tagName.className
+    // eventData      : (optional) data to be passed to event
+    // eventHandler   : the function to execute when an element matching the selector is created
+    // notForExisting : (optional) do not call for matching elements already on the page (default is false, 
+    //                  the handler will be called for pre-existing matching elements)
+    $(document).create( selector[, eventData], eventHandler[, notForExisting] );
 
 You can assign create events to nodes other than `document` as well. The handler will get called when decendants (to any level) matching the selector are created.
 
@@ -50,8 +44,9 @@ You can assign create events to nodes other than `document` as well. The handler
 
 The `destroy` method attaches an event that is fired when the element is removed from the document.
 
-    // eventHandler: the function to execute when the element is removed
-    $(element).destroy( eventHandler);
+    // eventData    : (optional) data to be passed to event
+    // eventHandler : the function to execute when the element is removed
+    $(element).destroy([ eventData,]  eventHandler);
 
 ## Supported browsers
 
