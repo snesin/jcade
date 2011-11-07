@@ -6,7 +6,7 @@ For example, the following code will listen for new elements with a className of
     
     // Listen for new elements and instantiate instances of the above class
     $(document).create(".myNamespace\\.widgets\\.ColorPicker",function(event){
-        new myNamespace.widgets.ColorPicker(event.target);
+        new myNamespace.widgets.ColorPicker(null,event.target);
     });
 
 Then you can add elements to the page anywhere like so:
@@ -14,6 +14,18 @@ Then you can add elements to the page anywhere like so:
     <input class="myNamespace.widgets.ColorPicker" />
   
 The event is triggered regardless where the element is in the document or how the element was created (via innerHTML assignments, jQuery methods, or methods from other frameworks).
+
+The added `$.uiFactory` method encapsulates the binding and instantiating into a simple function call. The above three lines of JavaScript can be replaced with a simple single one:
+
+    $.uiFactory("myNamespace.widgets.ColorPicker");
+
+Also, options defined in the HTML will be passed to the constructor. For example, the HTML could then look like so:
+
+    <input class="myNamespace.widgets.ColorPicker" ColorPicker:options="disabled:false, format:'HSV'" />
+
+Behind the scenes, after using the `$.uiFactory` method, the above HTML would trigger the following in JavaScript:
+
+    new myNamespace.widgets.ColorPicker({disabled:false, format:'HSV'},element);
 
 Though used far less often, the `destroy` event can be used to perform clean-up. A hypothetical class:
 
@@ -26,6 +38,14 @@ Though used far less often, the `destroy` event can be used to perform clean-up.
     };
 
 ## API
+
+### `uiFactory` Signature
+
+The `uiFactory` method is the preferred method for instantiating a JavaScript class by the className attribute when an element is added to the DOM:
+
+    // className      : The name of the JavaScript class, also used in the className of the element
+    // factoryOptions : (optional) options for the factory, see last section.
+    $(document).create( className[, className ...][, factoryOptions] );
 
 ### `create` Signature
 
@@ -47,6 +67,20 @@ The `destroy` method attaches an event that is fired when the element is removed
     // eventData    : (optional) data to be passed to event
     // eventHandler : the function to execute when the element is removed
     $(element).destroy([ eventData,]  eventHandler);
+
+### `factoryOptions` Properties
+
+The behavior of the `uiFactory` method can be altered by passing a `factoryOptions` object as the last parameter.
+
+    // finder      : a function that returns the class to instantiate, which will be passed 
+    //               the options and element
+    // reverseArgs : false, pass options,element when instantiating (default)
+    //               true, pass element,options when instantiating
+    // optionsAttr : format of the HTML attribute name containing JSON options for the 
+    //               instatiation by default '*:options" where the * will first be
+    //               replaced by the class name, then by the full class path
+    // noExisting  : false, instantiate classes for elements already on the page (default)
+    //               true, do not instantiate classes for elements already on the page
 
 ## Supported browsers
 

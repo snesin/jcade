@@ -8,7 +8,7 @@
  * Dual licensed under the MIT or GPL Version 2 licenses.
  *
 */
-(function($) {
+(function( $ ) {
    var bindings=[],attr='jcade.create.tagged_',nextBindId=0;
    function getEvent(target,currentTarget,data) {
       var event=jQuery.Event('create');
@@ -51,7 +51,7 @@
       }
    }
    $.fn.create=function(/*selector [,eventData] ,handler [,noExisting]*/) {
-      if (arguments.length==1 && typeof(arguments[0])!='string') {
+      if (arguments.length==1 && typeof(arguments[0])!=='string') {
          return createdElementIE(arguments[0]);
       }
       if ($.browser.msie && !document.getElementById('jcade.create.htc')) {
@@ -61,7 +61,7 @@
          return this;
       }
       var selector=arguments[0],eventData=null,handler,noExisting=false,bindId=nextBindId++;
-      if (arguments.length>2 && typeof(arguments[2])=='function') {
+      if (arguments.length>2 && typeof(arguments[2])==='function') {
          eventData=arguments[1];
          handler=arguments[2];
          noExisting=arguments.length>3 && arguments[3];
@@ -96,14 +96,13 @@
    $.fn.create.htcPath=(function() {
       var scripts=document.getElementsByTagName('SCRIPT');
       for (var i=0;i<scripts.length;i++) {
-         if (typeof(scripts[i].src)=='string' && scripts[i].src.search(/^(.*\b)jcade(\.min)?\.js(\?.*)?(#.*)?$/i)==0) {
+         if (typeof(scripts[i].src)==='string' && scripts[i].src.search(/^(.*\b)jcade(\.min)?\.js(\?.*)?(#.*)?$/i)==0) {
             return RegExp.$1;
          }
       }
       return '';
    })();
 })( jQuery );
-
 (function($) {
    var bindings=[],attr='jcade.destroy.tagged_',nextBindId=0;
    function getEvent(target,data) {
@@ -122,19 +121,19 @@
       }
    }
    $.fn.destroy=function(/*[ eventData,] handler, namespace*/) {
-      if (arguments.length==1 && typeof(arguments[0])!='function') {
+      if (arguments.length==1 && typeof(arguments[0])!=='function') {
          return destroyedElementIE(arguments[0]);
       }
       var eventData=null,handler,namespace=null,bindId=nextBindId++;
-      if (arguments.length>1 && typeof(arguments[1])=='function') {
+      if (arguments.length>1 && typeof(arguments[1])==='function') {
          eventData=arguments[0];
          handler=arguments[1];
-         if (arguments.length>2 && typeof(arguments[2])=='string' && arguments[2].length>0) {
+         if (arguments.length>2 && typeof(arguments[2])==='string' && arguments[2].length>0) {
             namespace=arguments[2];
          }
       } else {
          handler=arguments[0];
-         if (arguments.length>1 && typeof(arguments[1])=='string' && arguments[1].length>0) {
+         if (arguments.length>1 && typeof(arguments[1])==='string' && arguments[1].length>0) {
             namespace=arguments[1];
          }
       }
@@ -157,3 +156,32 @@
       return this;
    };
 })(jQuery);
+(function($) {
+   function makeFactory(classPath,options) {
+      var factory=$.extend({path:classPath,
+                            name:classPath.split(".").pop(),
+                            finder:new Function("return "+classPath),
+                            reverseArgs:false,
+                            noExisting:false,
+                            optionsAttr:"*:options",
+                            handler:function(event) {
+                               var data=event.target.getAttribute(factory.optionsAttr.replace(/\*/g,factory.name)) || event.target.getAttribute(factory.optionsAttr.replace(/\*/g,factory.path));
+                               if (typeof(data)==="string") {
+                                  data=(new Function("return {"+data+"};"))();
+                               }
+                               var element=$(event.target);
+                               new (factory.finder(data,element))( factory.reverseArgs ?  element : data,factory.reverseArgs ?  data : element);
+                            }
+                           },options);
+      $(document.body).create("."+classPath.replace(/\./g,"\\."),factory.handler,factory.noExisting);
+      return factory;
+   }
+   $.uiFactory=function(/* classPath [, classPath ...][,options] */) {
+      var options=arguments.length>1 && typeof(arguments[arguments.length-1])!=="string" ? arguments[arguments.length-1] : null;
+      for (var i=0;i<arguments.length;i++) {
+         if (typeof(arguments[i])==="string")
+            makeFactory(arguments[i],options);
+      }
+      return this;
+   };
+})( jQuery );
