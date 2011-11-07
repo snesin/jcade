@@ -76,6 +76,7 @@ The behavior of the `uiFactory` method can be altered by passing a `factoryOptio
     //               the options and element
     // reverseArgs : false, pass options,element when instantiating (default)
     //               true, pass element,options when instantiating
+    // options     : options to pass to the class contructor, can be overridden by options specified in the HTML
     // optionsAttr : format of the HTML attribute name containing JSON options for the 
     //               instantiation by default '*:options" where the * will first be
     //               replaced by the class name, then by the full class path

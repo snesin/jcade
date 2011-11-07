@@ -157,30 +157,32 @@
    };
 })(jQuery);
 (function($) {
-   function makeFactory(classPath,options) {
+   function makeFactory(classPath,factoryOptions) {
       var factory=$.extend({path:classPath,
                             name:classPath.split(".").pop(),
                             finder:new Function("return "+classPath),
                             reverseArgs:false,
-                            noExisting:false,
+                            options:null,
                             optionsAttr:"*:options",
+                            noExisting:false,
                             handler:function(event) {
-                               var data=event.target.getAttribute(factory.optionsAttr.replace(/\*/g,factory.name)) || event.target.getAttribute(factory.optionsAttr.replace(/\*/g,factory.path));
-                               if (typeof(data)==="string") {
-                                  data=(new Function("return {"+data+"};"))();
+                               var options=event.target.getAttribute(factory.optionsAttr.replace(/\*/g,factory.name)) || event.target.getAttribute(factory.optionsAttr.replace(/\*/g,factory.path));
+                               if (typeof(options)==="string") {
+                                  options=(new Function("return {"+options+"};"))();
                                }
+                               options=$.extend({},factory.options,options);
                                var element=$(event.target);
-                               new (factory.finder(data,element))( factory.reverseArgs ?  element : data,factory.reverseArgs ?  data : element);
+                               new (factory.finder(data,element))( factory.reverseArgs ?  element : options,factory.reverseArgs ?  options : element);
                             }
-                           },options);
+                           },factoryOptions);
       $(document.body).create("."+classPath.replace(/\./g,"\\."),factory.handler,factory.noExisting);
       return factory;
    }
-   $.uiFactory=function(/* classPath [, classPath ...][,options] */) {
-      var options=arguments.length>1 && typeof(arguments[arguments.length-1])!=="string" ? arguments[arguments.length-1] : null;
+   $.uiFactory=function(/* classPath [, classPath ...][,factoryOptions] */) {
+      var factoryOptions=arguments.length>1 && typeof(arguments[arguments.length-1])!=="string" ? arguments[arguments.length-1] : null;
       for (var i=0;i<arguments.length;i++) {
          if (typeof(arguments[i])==="string")
-            makeFactory(arguments[i],options);
+            makeFactory(arguments[i],factoryOptions);
       }
       return this;
    };
