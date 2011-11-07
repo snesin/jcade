@@ -172,7 +172,7 @@
                                }
                                options=$.extend({},factory.options,options);
                                var element=$(event.target);
-                               new (factory.finder(data,element))( factory.reverseArgs ?  element : options,factory.reverseArgs ?  options : element);
+                               new (factory.finder(options,element))( factory.reverseArgs ?  element : options,factory.reverseArgs ?  options : element);
                             }
                            },factoryOptions);
       $(document.body).create("."+classPath.replace(/\./g,"\\."),factory.handler,factory.noExisting);
