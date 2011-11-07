@@ -15,15 +15,15 @@ Then you can add elements to the page anywhere like so:
   
 The event is triggered regardless where the element is in the document or how the element was created (via innerHTML assignments, jQuery methods, or methods from other frameworks).
 
-The added `$.uiFactory` method encapsulates the binding and instantiating into a simple function call. The above three lines of JavaScript can be replaced with a simple single one:
+The jcade plug-in adds also adds the `$.uiFactory` helper method, which encapsulates the binding and instantiating into a simple function call. The above three lines of JavaScript can be replaced with a single one:
 
     $.uiFactory("myNamespace.widgets.ColorPicker");
 
-Also, options defined in the HTML will be passed to the constructor. For example, the HTML could then look like so:
+Using the `$.uiFactory` method, options defined in the HTML will also be passed to the constructor. For example, the HTML could then look like so:
 
     <input class="myNamespace.widgets.ColorPicker" ColorPicker:options="disabled:false, format:'HSV'" />
 
-Behind the scenes, after using the `$.uiFactory` method, the above HTML would trigger the following in JavaScript:
+Behind the scenes, after using the `$.uiFactory` method, inserting the above HTML would trigger the following in JavaScript:
 
     new myNamespace.widgets.ColorPicker({disabled:false, format:'HSV'},element);
 
@@ -45,7 +45,7 @@ The `uiFactory` method is the preferred method for instantiating a JavaScript cl
 
     // className      : The name of the JavaScript class, also used in the className of the element
     // factoryOptions : (optional) options for the factory, see last section.
-    $(document).create( className[, className ...][, factoryOptions] );
+    $.uiFactory( className[, className ...][, factoryOptions] );
 
 ### `create` Signature
 
@@ -58,7 +58,7 @@ The `create` method is typically used to pass a selector and event handler to th
     //                  the handler will be called for pre-existing matching elements)
     $(document).create( selector[, eventData], eventHandler[, notForExisting] );
 
-You can assign create events to nodes other than `document` as well. The handler will get called when decendants (to any level) matching the selector are created.
+You can assign create events to nodes other than `document` as well. The handler will get called when descendants (to any level) matching the selector are created.
 
 ### `destroy` Signature
 
@@ -77,7 +77,7 @@ The behavior of the `uiFactory` method can be altered by passing a `factoryOptio
     // reverseArgs : false, pass options,element when instantiating (default)
     //               true, pass element,options when instantiating
     // optionsAttr : format of the HTML attribute name containing JSON options for the 
-    //               instatiation by default '*:options" where the * will first be
+    //               instantiation by default '*:options" where the * will first be
     //               replaced by the class name, then by the full class path
     // noExisting  : false, instantiate classes for elements already on the page (default)
     //               true, do not instantiate classes for elements already on the page
