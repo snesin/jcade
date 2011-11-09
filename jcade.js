@@ -1,5 +1,5 @@
 /*!
- * jcade v0.2
+ * jcade v0.3
  * http://github.com/snesin/jcade
  * 
  * jQuery create and destroy events
@@ -160,19 +160,20 @@
    function makeFactory(classPath,factoryOptions) {
       var factory=$.extend({path:classPath,
                             name:classPath.split(".").pop(),
-                            finder:new Function("return "+classPath),
+                            invoker:new Function("arg1","arg2","factory","return new "+classPath+"(arg1,arg2);"),
                             reverseArgs:false,
                             options:null,
-                            optionsAttr:"*:options",
+                            optionsName:"*:options",
+                            optionsParser:new Function("options","element","factory","var b=options.search(/^\\w*{/),c=options.indexOf(':'),p=options.indexOf('(');if (b>=0 || (p>=0 && (c<0 || p<c)))return (new Function('return '+options+';'))();return (new Function('return {'+options+'};'))();"),
                             noExisting:false,
                             handler:function(event) {
-                               var options=event.target.getAttribute(factory.optionsAttr.replace(/\*/g,factory.name)) || event.target.getAttribute(factory.optionsAttr.replace(/\*/g,factory.path));
-                               if (typeof(options)==="string") {
-                                  options=(new Function("return {"+options+"};"))();
-                               }
-                               options=$.extend({},factory.options,options);
                                var element=$(event.target);
-                               new (factory.finder(options,element))( factory.reverseArgs ?  element : options,factory.reverseArgs ?  options : element);
+                               var options=event.target.getAttribute(factory.optionsName.replace(/\*/g,factory.name)) || event.target.getAttribute(factory.optionsName.replace(/\*/g,factory.path));
+                               if (typeof(options)==="string")
+                                  options=factory.optionsParser(options,element,factory);
+                               if (factory.options)
+                                  options=$.extend({},factory.options,options);
+                               factory.invoker(factory.reverseArgs ?  element : options,factory.reverseArgs ?  options : element,factory);
                             }
                            },factoryOptions);
       $(document).create("."+classPath.replace(/\./g,"\\."),factory.handler,factory.noExisting);
@@ -186,4 +187,19 @@
       }
       return this;
    };
+   if ($.isFunction($.fn.datepicker))
+   {
+      $.uiFactory( "jQuery.ui.datepicker",{invoker:new Function("options","element","element.datepicker(options)")});
+   }
+   if ($.isFunction($.widget) && $.isFunction($.widget.bridge))
+   {
+      var bridge=$.widget.bridge;
+      $.widget.bridge=function(name,object){
+         bridge.apply(this,arguments);
+         $.uiFactory( "jQuery." + object.prototype.namespace + "." + name,{invoker:new Function("options","element","element."+name+"(options)")} );
+      }
+      for (var i in $.ui)
+         if ($.isFunction($.ui[i]) && $.ui[i].toString().indexOf("this._createWidget")>0)
+            $.uiFactory("jQuery.ui."+i,{invoker:new Function("options","element","element."+i+"(options);")});
+   }
 })( jQuery );
