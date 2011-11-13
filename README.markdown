@@ -75,8 +75,7 @@ Multiple classes can be registered at once, and the factory fully customized wit
     // factoryOptions : Options for the factory, see next section.
     $.uiFactory( className [, className ...] [, factoryOptions] );
 
-
-#### `factoryOptions` Properties
+### `factoryOptions` Properties
 
 The behavior of the `uiFactory` method can be altered by passing a `factoryOptions` object as the last parameter. It can contain any of the following properties:
 
