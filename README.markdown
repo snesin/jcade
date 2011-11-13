@@ -64,7 +64,7 @@ You can assign `create` events to nodes other than `document` as well. The handl
 
 ### `uiFactory` Signatures
 
-The `uiFactory` method is the easiest route to automatically bind widget classes to HTML elements by the className attribute. Options will automatically be passed to your class as described above as well. Just let the `uiFactory` know the class exists by passing it a string with the full path:
+The `uiFactory` method is the easiest route to automatically bind widget classes to HTML elements by the className attribute. Options will automatically be passed to the class as described above as well. Just let the `uiFactory` know the class exists by passing it a string with the full path:
 
     // className      : A string containing the full path of JavaScript widget class.
     $.uiFactory( className );
@@ -74,6 +74,7 @@ Multiple classes can be registered at once, and the factory fully customized wit
     // className      : Full path of JavaScript widget class.
     // factoryOptions : Options for the factory, see next section.
     $.uiFactory( className [, className ...] [, factoryOptions] );
+
 
 #### `factoryOptions` Properties
 
