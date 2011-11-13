@@ -1,14 +1,21 @@
 # jcade - jQuery Create and Destroy Events
 
-The jcade plug-in adds the `create` event to jQuery, providing easy automatic binding to **future elements**. jcade also integrates with jQuery UI to allow simpler widget HTML. Any widget library can take advantage of jcade.
+The jcade plug-in adds the `create` event to jQuery, providing easy and automatic binding to **future elements**. jcade also integrates with jQuery UI to allow simpler widget HTML. Any widget library can take advantage of jcade.
 
-The `create` event is fired when selected elements are added to the document, This allows widget authors to automatically bind elements to widget classes. As mentioned above, jcade automatically integrates with jQuery UI, so if included, site authors can simply add the following HTML to their page:
+At the heart of jcade is the `create` event that it adds to jQuery. With it, any document node can listen for new sub-nodes based on a selector. For example, to raise an event for any **future** anchor (`<a>`) elements added to the document by any means:
+
+    $( document ).create( "a", function( event ) {
+       alert( event.target );
+    });
+
+The `create` event is fired on **future elements** regardless of how they are added; via page source, document.write, innerHTML assignments, jQuery methods, methods from other frameworks, or by any means.
+
+jcade provides widget authors an easy way to automatically bind elements to widget classes. With jQuery UI and jcade included, site authors can simply add the following HTML to their page:
 
     <div class="jQuery.ui.slider" />
 
-The `slider` class will automatically be bound to the element without the site author needing to write any script.
+The `slider` class will automatically be bound to the element without the site author needing to write any script. The site author does not have to track what new widget elements will need binding, it happens automatically. This allows the site author to 'write less, do more' as well.
 
-jcade binds existing elements, and more importantly, all **future elements**, regardless of how they are added (via page source, document.write, innerHTML assignments, jQuery methods, methods from other frameworks, anything). The site author no longer has to track what new elements will need binding and script them, it happens automatically. This allows the site author to 'write less, do more' as well.
 
 jcade can work with any widget framework, not just jQuery UI. It adds the `$.uiFactory` method which encapsulates the binding into a simple function call. For example, if you have a JavaScript widget class `myNamespace.widgets.colorpicker`, simply include jcade and call the following from your class declaration code:
 
@@ -27,11 +34,6 @@ Options for widget classes are declared as an attribute of the HTML element. The
     <div class="jQuery.ui.slider" slider:options="orientation:'vertical',value:50" />
     <div class="jQuery.ui.slider" jQuery.ui.slider:options="orientation:'vertical',value:50"  />
 
-At the heart of jcade is the `create` event that it adds to jQuery. With it, any document node can listen for new sub-nodes based on a selector. For example, to raise an event for any existing or **future** anchor (`<a>`) elements added to the document by any means:
-
-    $( document ).create( "a", function( event ) {
-       alert( event.target );
-    });
 
 jcade also adds a `destroy` event that can be used to perform instance clean-up. For example:
 
@@ -40,31 +42,6 @@ jcade also adds a `destroy` event that can be used to perform instance clean-up.
     });
 
 ## API
-
-### `uiFactory` Signature
-
-The `uiFactory` method is preferred for invoking a JavaScript class by the className attribute when an element is added to the DOM:
-
-    // className      : Full path of JavaScript class, also className of element.
-    // factoryOptions : Options for the factory, see next section.
-    $.uiFactory( className [, className ...] [, factoryOptions] );
-
-#### `factoryOptions` Properties
-
-The behavior of the `uiFactory` method can be altered by passing a `factoryOptions` object as the last parameter. It can contain any of the following properties:
-
-    // invoker       : A function that invokes the class, The arguments passed to invoker 
-    //                  are options, element and factory.
-    // reverseArgs   : False, pass options,element,factory when calling invoker. (Default)
-    //                  True, pass element,options,factory when calling invoker.
-    // options       : Options to pass to the invoker. Will be extended with options 
-    //                  specified in the HTML.
-    // optionsName   : Format of the HTML attribute name containing JSON options for the
-    //                  invocation. By default '*:options'. The * will first be replaced
-    //                  by the class name, and if not found, then by the full class path.
-    // optionsParser : A function to parse the options attribute value.
-    // notExisting   : False, invoke classes for elements already on the page. (Default)
-    //                  True, do not invoke classes for elements already on the page.
 
 ### `create` Signatures
 
@@ -84,6 +61,36 @@ You can assign `create` events to nodes other than `document` as well. The handl
     // notExisting  : False, call handler for matching elements already on the page. (Default)
     //                 True. do not call the handler for pre-existing elements.
     $( rootSelector ).create( selector [, eventData], eventHandler [, notForExisting] );
+
+### `uiFactory` Signatures
+
+The `uiFactory` method is the easiest route to automatically bind widget classes to HTML elements by the className attribute. Options will automatically be passed to your class as described above as well. Just let the `uiFactory` know the class exists by passing it a string with the full path:
+
+    // className      : A string containing the full path of JavaScript widget class.
+    $.uiFactory( className );
+
+Multiple classes can be registered at once, and the factory fully customized with optional parameters like so:
+
+    // className      : Full path of JavaScript widget class.
+    // factoryOptions : Options for the factory, see next section.
+    $.uiFactory( className [, className ...] [, factoryOptions] );
+
+#### `factoryOptions` Properties
+
+The behavior of the `uiFactory` method can be altered by passing a `factoryOptions` object as the last parameter. It can contain any of the following properties:
+
+    // invoker       : A function that invokes the class, The arguments passed to invoker 
+    //                  are options, element and factory.
+    // reverseArgs   : False, pass options,element,factory when calling invoker. (Default)
+    //                  True, pass element,options,factory when calling invoker.
+    // options       : Options to pass to the invoker. Will be extended with options 
+    //                  specified in the HTML.
+    // optionsName   : Format of the HTML attribute name containing JSON options for the
+    //                  invocation. By default '*:options'. The * will first be replaced
+    //                  by the class name, and if not found, then by the full class path.
+    // optionsParser : A function to parse the options attribute value.
+    // notExisting   : False, invoke classes for elements already on the page. (Default)
+    //                  True, do not invoke classes for elements already on the page.
 
 
 ### `destroy` Signature
