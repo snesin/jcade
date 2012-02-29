@@ -41,7 +41,7 @@
          if (e.is(bindings[i].selector)) {
             var c=bindings[i].context;
             for (var j=0;j<c.length;j++) {
-               if ($.contains(c[j],element)) {
+               if ($.contains(c[j],element) && !element[attr+bindings[i].bindId]) {
                   element[attr+bindings[i].bindId]=true;
                   bindings[i].handler(getEvent(element,c[j],bindings[i].data));
                   break;
