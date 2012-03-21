@@ -1,5 +1,5 @@
 /*!
- * jcade v0.3
+ * jcade v0.4
  * http://github.com/snesin/jcade
  * 
  * jQuery create and destroy events
@@ -18,19 +18,14 @@
       return event;
    }
    function searchAndHandle(selector,context,eventData,handler,bindId) {
-      var list=[];
       context.each(function(cIndex,cElement) {
          $(selector,cElement).each(function(index,element) {
             if(!element[attr+bindId]) {
-               list.push(element);
+               element[attr+bindId]=true;
                handler(getEvent(element,cElement,eventData));
             }
          })
       });
-      for (var i=0;i<list.length;i++) {
-         list[i][attr+bindId]=true;
-      }
-      list=null;
    }
    function createdElementIE(element) {
       if (element[attr]) {
@@ -49,6 +44,22 @@
             }
          }
       }
+   }
+   function parseUrl(url) {
+      if (url.search(/^([a-z]+:)\/\/(.+?)(:(\d*))?(\/.*?)([^\/]*?)(\?.*?)?(#.*)?$/i)===0) {
+         return {protocol:RegExp.$1
+                ,hostname:RegExp.$2
+                ,_port:RegExp.$3
+                ,port:RegExp.$4.length>0 ? parseInt(RegExp.$4) : (RegExp.$1==="http:" ? 80 : (RegExp.$1==="https:" ? 443 : -1))
+                ,path:RegExp.$5
+                ,file:RegExp.$6
+                ,pathname:RegExp.$5+RegExp.$6
+                ,search:RegExp.$7
+                ,hash:RegExp.$8
+                ,toString:new Function("return this.protocol+'//'+this.hostname+':'+this.port+this.path+this.file+this.search+this.hash;")
+                };
+      }
+      return null;
    }
    $.fn.create=function(/*selector [,eventData] ,handler [,noExisting]*/) {
       if (arguments.length==1 && typeof(arguments[0])!=='string') {
@@ -69,8 +80,8 @@
          handler=arguments[1];
          noExisting=arguments.length>2 && arguments[2];
       }
+      bindings.push({selector:selector,context:this,data:eventData,handler:handler,bindId:bindId});
       if ($.browser.msie) {
-         bindings.push({selector:selector,context:this,data:eventData,handler:handler,bindId:bindId});
          document.getElementById('jcade.create.htc').styleSheet.addRule(selector,'behavior:url('+$.fn.create.htcPath+'jcade.create.htc)',0);
       } else {
          var delayHandle=null;
@@ -94,14 +105,37 @@
       return this;
    };
    $.fn.create.htcPath=(function() {
-      var scripts=document.getElementsByTagName('SCRIPT');
-      for (var i=0;i<scripts.length;i++) {
-         if (typeof(scripts[i].src)==='string' && scripts[i].src.search(/^(.*\b)jcade(\.min)?\.js(\?.*)?(#.*)?$/i)==0) {
-            return RegExp.$1;
+      var path="";
+      if (typeof(jQuery_fn_create_htcPath)==="string") {
+         path=jQuery_fn_create_htcPath;
+      } else {
+         var scripts=document.getElementsByTagName('SCRIPT');
+         for (var i=0;i<scripts.length;i++) {
+            if (typeof(scripts[i].src)==='string' && scripts[i].src.search(/^(.*\b)jcade(\.min)?\.js(\?.*)?(#.*)?$/i)==0) {
+               path=RegExp.$1;
+               break;
+            }
          }
       }
-      return '';
+      var url=parseUrl(path);
+      if (url && window.location.hostname.length>0 && url.hostname!==window.location.hostname) {
+         path="/";
+      }
+      return path;
    })();
+   $.fn.create.tagByClassName=function(elements,className) {
+      return $.fn.create.tag(elements,"."+className.replace(/\./g,"\\."));
+   };
+   $.fn.create.tag=function(elements,selector) {
+      elements=$(elements);
+      elements.each(function(index,element){element[attr]=true;});
+      for (var i=0;i<bindings.length;i++) {
+         if (bindings[i] && bindings[i].selector===selector) {
+            var a=attr+bindings[i].bindId;
+            elements.each(function(index,element){element[a]=true;});
+         }
+      }
+   };
 })( jQuery );
 (function($) {
    var bindings=[],attr='jcade.destroy.tagged_',nextBindId=0;
