@@ -115,12 +115,12 @@ jcade works in all the major browsers, including:
 
 **It does not use an interval.**
 
-For Microsoft's Internet Explorer, jcade uses [behaviors](http://msdn.microsoft.com/en-us/library/ms531018\(v=VS.85\).aspx) to trigger the events, and the two `.htc` files will be needed. The path to both `.htc` files is controlled by the `jQuery.fn.create.htcPath` variable. By default it will be set to the same path as the script containing `jcade.js` or `jcade.min.js`. If neither is found, it is blank, and the files are assumed to be in the same folder as the page. The value of `jQuery.fn.create.htcPath` can be set as needed. The `.htc` files must have the same document domain as the page.
+For Microsoft's Internet Explorer 5-8, jcade uses [behaviors](http://msdn.microsoft.com/en-us/library/ms531018\(v=VS.85\).aspx) to trigger the events, and the two `.htc` files will be needed. The path to both `.htc` files is controlled by the `jQuery.fn.create.htcPath` variable. By default it will be set to the same path as the script containing `jcade.js` or `jcade.min.js`. If neither is found, it is blank, and the files are assumed to be in the same folder as the page. The value of `jQuery.fn.create.htcPath` can be set as needed. The `.htc` files must have the same document domain as the page.
 
-For non-IE browsers, jcade uses `DOMNodeInserted` (delayed with a timer) and `DOMNodeRemoved` events.
+For IE9+ and all non-IE browsers, jcade uses `DOMNodeInserted` (delayed with a timer) and `DOMNodeRemoved` events.
 
 ## License
 
 The jcade plugin is dual licensed *(just like jQuery)* under the MIT (MIT\_LICENSE.txt) and GPL Version 2 (GPL\_LICENSE.txt) licenses.
 
-Copyright (c) 2011 [Scott Nesin](http://scottnesin.com/)
+Copyright (c) 2011-2012 [Scott Nesin](http://scottnesin.com/)
