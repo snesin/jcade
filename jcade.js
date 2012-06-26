@@ -1,14 +1,15 @@
 /*!
- * jcade v0.4
+ * jcade v0.5
  * http://github.com/snesin/jcade
  * 
  * jQuery create and destroy events
  * 
- * Copyright 2011, Scott Nesin
+ * Copyright 2011-2012, Scott Nesin
  * Dual licensed under the MIT or GPL Version 2 licenses.
  *
 */
 (function( $ ) {
+   var useBehaviors=($.browser.msie && $.browser.version<9);
    var bindings=[],attr='jcade.create.tagged_',nextBindId=0;
    function getEvent(target,currentTarget,data) {
       var event=jQuery.Event('create');
@@ -28,10 +29,10 @@
       });
    }
    function createdElementIE(element) {
-      if (element[attr]) {
+      var e=$(element);
+      if (e[0][attr]) {
          return false;
       }
-      var e=$(element);
       for (var i=0;i<bindings.length;i++) {
          if (e.is(bindings[i].selector)) {
             var c=bindings[i].context;
@@ -65,7 +66,7 @@
       if (arguments.length==1 && typeof(arguments[0])!=='string') {
          return createdElementIE(arguments[0]);
       }
-      if ($.browser.msie && !document.getElementById('jcade.create.htc')) {
+      if (useBehaviors && !document.getElementById('jcade.create.htc')) {
          $('HEAD').append('<style id="jcade.create.htc">.jcade\\.destroy {behavior:url('+$.fn.create.htcPath+'jcade.destroy.htc)}</style>');
       }
       if (arguments.length==0) {
@@ -81,7 +82,25 @@
          noExisting=arguments.length>2 && arguments[2];
       }
       bindings.push({selector:selector,context:this,data:eventData,handler:handler,bindId:bindId});
-      if ($.browser.msie) {
+      if (useBehaviors) {
+         var added=false;
+         if (false)
+         {
+            var unescapedSelector=selector.replace(/\\/g,"");
+            for (var i=0;i<document.styleSheets.length && !added;i++)
+            {
+               var rules=document.styleSheets[i].rules;
+               for (var j=0;j<rules.length && !added;j++)
+               {
+                  var rule=rules[j];
+                  if (rule.selectorText===unescapedSelector)
+                  {
+                     rule.style.behavior="url("+$.fn.create.htcPath+"jcade.create.htc) "+rule.style.behavior;
+                     added=true;
+                  }
+               }
+            }
+         }
          document.getElementById('jcade.create.htc').styleSheet.addRule(selector,'behavior:url('+$.fn.create.htcPath+'jcade.create.htc)',0);
       } else {
          var delayHandle=null;
@@ -99,7 +118,7 @@
          $(selector,this).each(function(index,e){e[attr]=true;});
       } else if ($.isReady) {
          searchAndHandle(selector,this,eventData,handler,bindId);
-      } else if (!$.browser.msie) {
+      } else if (!useBehaviors) {
          $(function(){searchAndHandle(selector,self,eventData,handler,bindId);});
       }
       return this;
@@ -138,6 +157,7 @@
    };
 })( jQuery );
 (function($) {
+   var useBehaviors=($.browser.msie && $.browser.version<9);
    var bindings=[],attr='jcade.destroy.tagged_',nextBindId=0;
    function getEvent(target,data) {
       var event=jQuery.Event('destroy');
@@ -172,7 +192,7 @@
          }
       }
       this.addClass('jcade.destroy');
-      if ($.browser.msie) {
+      if (useBehaviors) {
          $.fn.create();
          this.each(function(index,element){bindings.push({element:element,namespace:namespace,data:eventData,handler:handler,bindId:bindId});});
       } else {
