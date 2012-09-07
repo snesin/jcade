@@ -222,7 +222,7 @@
                             noExisting:false,
                             handler:function(event) {
                                var element=$(event.target);
-                               var options=event.target.getAttribute(factory.optionsName.replace(/\*/g,factory.name)) || event.target.getAttribute(factory.optionsName.replace(/\*/g,factory.path));
+                               var options=element[0].getAttribute(factory.optionsName.replace(/\*/g,factory.name)) || element[0].getAttribute(factory.optionsName.replace(/\*/g,factory.path));
                                if (typeof(options)==="string")
                                   options=factory.optionsParser(options,element,factory);
                                if (factory.options)
