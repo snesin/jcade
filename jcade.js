@@ -220,6 +220,7 @@
                             optionsName:"*:options",
                             optionsParser:new Function("options","element","factory","var b=options.search(/^\\w*{/),c=options.indexOf(':'),p=options.indexOf('(');if (b>=0 || (p>=0 && (c<0 || p<c)))return (new Function('return '+options+';'))();return (new Function('return {'+options+'};'))();"),
                             noExisting:false,
+                            filter:new Function("element","options","return true;"),
                             handler:function(event) {
                                var element=$(event.target);
                                var options=element[0].getAttribute(factory.optionsName.replace(/\*/g,factory.name)) || element[0].getAttribute(factory.optionsName.replace(/\*/g,factory.path));
@@ -227,7 +228,8 @@
                                   options=factory.optionsParser(options,element,factory);
                                if (factory.options)
                                   options=$.extend({},factory.options,options);
-                               factory.invoker(factory.reverseArgs ?  element : options,factory.reverseArgs ?  options : element,factory);
+                               if (factory.filter(element,options))
+                                  factory.invoker(factory.reverseArgs ?  element : options,factory.reverseArgs ?  options : element,factory);
                             }
                            },factoryOptions);
       $(document).create("."+classPath.replace(/\./g,"\\."),factory.handler,factory.noExisting);
