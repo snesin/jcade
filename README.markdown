@@ -91,6 +91,8 @@ The behavior of the `uiFactory` method can be altered by passing a `factoryOptio
     // optionsParser : A function to parse the options attribute value.
     // notExisting   : False, invoke classes for elements already on the page. (Default)
     //                  True, do not invoke classes for elements already on the page.
+    // filter        : A function called before the invoker with the element and options. 
+    //                  Return false to not invoke the class for that element.
 
 
 ### `destroy` Signature
