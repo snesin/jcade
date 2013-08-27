@@ -33,6 +33,7 @@
       if (e[0][attr]) {
          return false;
       }
+      element=e[0];
       for (var i=0;i<bindings.length;i++) {
          if (e.is(bindings[i].selector)) {
             var c=bindings[i].context;
