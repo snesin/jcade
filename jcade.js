@@ -1,10 +1,10 @@
 /*!
- * jcade v0.5
+ * jcade v0.6
  * http://github.com/snesin/jcade
  * 
  * jQuery create and destroy events
  * 
- * Copyright 2011-2012, Scott Nesin
+ * Copyright 2011-2013, Scott Nesin
  * Dual licensed under the MIT or GPL Version 2 licenses.
  *
 */
@@ -20,6 +20,7 @@
    }
    function searchAndHandle(selector,context,eventData,handler,bindId) {
       context.each(function(cIndex,cElement) {
+         createdElementIE(element.parentNode);
          $(selector,cElement).each(function(index,element) {
             if(!element[attr+bindId]) {
                element[attr+bindId]=true;
@@ -30,10 +31,12 @@
    }
    function createdElementIE(element) {
       var e=$(element);
-      if (e[0][attr]) {
+      if (e.length===0 || e[0][attr] || e[0][attr+"*"]) {
          return false;
       }
       element=e[0];
+      createdElementIE(element.parentNode);
+      e[0][attr+"*"]=true;
       for (var i=0;i<bindings.length;i++) {
          if (e.is(bindings[i].selector)) {
             var c=bindings[i].context;
@@ -84,24 +87,6 @@
       }
       bindings.push({selector:selector,context:this,data:eventData,handler:handler,bindId:bindId});
       if (useBehaviors) {
-         var added=false;
-         if (false)
-         {
-            var unescapedSelector=selector.replace(/\\/g,"");
-            for (var i=0;i<document.styleSheets.length && !added;i++)
-            {
-               var rules=document.styleSheets[i].rules;
-               for (var j=0;j<rules.length && !added;j++)
-               {
-                  var rule=rules[j];
-                  if (rule.selectorText===unescapedSelector)
-                  {
-                     rule.style.behavior="url("+$.fn.create.htcPath+"jcade.create.htc) "+rule.style.behavior;
-                     added=true;
-                  }
-               }
-            }
-         }
          document.getElementById('jcade.create.htc').styleSheet.addRule(selector,'behavior:url('+$.fn.create.htcPath+'jcade.create.htc)',0);
       } else {
          var delayHandle=null;
