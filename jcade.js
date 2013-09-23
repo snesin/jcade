@@ -20,8 +20,8 @@
    }
    function searchAndHandle(selector,context,eventData,handler,bindId) {
       context.each(function(cIndex,cElement) {
-         createdElementIE(element.parentNode);
          $(selector,cElement).each(function(index,element) {
+            createdElementIE(element.parentNode);
             if(!element[attr+bindId]) {
                element[attr+bindId]=true;
                handler(getEvent(element,cElement,eventData));
